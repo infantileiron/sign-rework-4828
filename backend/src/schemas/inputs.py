@@ -1,3 +1,4 @@
+from datetime import date as Date
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
@@ -54,3 +55,19 @@ class RunInput(Input):
 class LoginInput(Input):
     email: str = Field(min_length=3, max_length=100)
     password: str = Field(min_length=1, max_length=128)
+
+
+class ShiftInput(Input):
+    name: str = Field(min_length=1, max_length=60)
+    date: Date
+    capacity_hours: float = Field(gt=0, le=200)
+
+
+class PendingOrderInput(Intake):
+    code: OrderCode
+    title: str = Field(min_length=1, max_length=90)
+    deadline: Date
+
+
+class TrialInput(Input):
+    report_id: int = Field(gt=0, le=9223372036854775807)

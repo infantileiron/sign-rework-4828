@@ -5,6 +5,7 @@ import {ordersPage} from './pages/orders.js';
 import {plansPage} from './pages/plans.js';
 import {reportsPage} from './pages/reports.js';
 import {runsPage} from './pages/runs.js';
+import {schedulePage} from './pages/schedule.js';
 import {activeRoute} from './router/routes.js';
 import {session} from './stores/session.js';
 import {studio} from './stores/studio.js';
@@ -33,6 +34,20 @@ async function render() {
   if (page === 'orders') ordersPage(panel, render);
   if (page === 'plans') plansPage(panel, render);
   if (page === 'reports' && id) cleanup = reportsPage(panel, id, render);
+  if (page === 'schedule') {
+    panel.textContent = '正在读取排班数据…';
+    try {
+      studio.reports = await api.reports();
+      if (!panel.isConnected) return;
+      schedulePage(panel);
+    } catch (error) {
+      if (!panel.isConnected) return;
+      panel.textContent = error.message + ' ';
+      const retry = Object.assign(document.createElement('button'), {textContent:'重试', className:'button'});
+      retry.onclick = render;
+      panel.append(retry);
+    }
+  }
   if (page === 'runs' || page === 'reports' && !id) {
     panel.textContent = '正在读取运行记录…';
     try {

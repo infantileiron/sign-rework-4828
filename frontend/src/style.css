@@ -218,3 +218,9 @@ dialog .panel-head { padding: 0 0 10px; min-height: 32px; }
   .panel-body, .panel-form { padding: 12px; }
   .partition-strip div { padding: 8px; }
 }
+
+.schedule-split { margin-bottom: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 3px; background: var(--high); color: var(--text); font-size: 11px; white-space: nowrap; }
+.trial-panel { margin-bottom: 16px; }
+.unscheduled-panel { margin-top: 16px; }
+.assignments-panel { margin-top: 16px; }

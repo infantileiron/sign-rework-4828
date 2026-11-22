@@ -36,13 +36,27 @@ def seed():
             VALUES ('接单三项 · v1', 0.10, ARRAY['minutes','shots','switches'], %s),
                    ('时长与镜头 · v2', 0.20, ARRAY['minutes','shots'], %s)
             ON CONFLICT (name) DO NOTHING''', ('analyst@bridge.test', 'analyst@bridge.test'))
+        with db.cursor() as cursor:
+            cursor.executemany('''INSERT INTO shifts (name, shift_date, capacity_hours, created_by)
+                VALUES (%s, %s, %s, %s) ON CONFLICT (shift_date, name) DO NOTHING''',
+                [('早班 · 剪辑台 A', '2026-11-24', 8.0, 'analyst@bridge.test'),
+                 ('晚班 · 剪辑台 B', '2026-11-26', 8.0, 'analyst@bridge.test'),
+                 ('周末加班', '2026-11-28', 12.0, 'analyst@bridge.test')])
+            cursor.executemany('''INSERT INTO pending_orders
+                (code, title, deadline, minutes, shots, switches, created_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (code) DO NOTHING''',
+                [('QY-0701', '轮渡服务｜夜航指引', '2026-11-25', 5.5, 22, 2, 'analyst@bridge.test'),
+                 ('QY-0702', '社区门诊｜接种告知', '2026-11-26', 3.4, 15, 1, 'analyst@bridge.test'),
+                 ('QY-0703', '政务窗口｜跨省通办', '2026-11-27', 7.2, 34, 4, 'analyst@bridge.test'),
+                 ('QY-0704', '城市展厅｜临时闭馆', '2026-11-24', 2.0, 9, 1, 'analyst@bridge.test')])
         # Stable natural keys and user-editable values make repeat runs directly comparable.
         sets = {table: db.execute(f'SELECT {columns} FROM {table} ORDER BY {order_key}').fetchall()
                 for table, columns, order_key in (
                     ('accounts', 'email, role', 'email'), ('orders', '*', 'code'), ('crews', '*', 'code'),
-                    ('plans', 'name, alpha, features', 'name'),
+                    ('plans', 'name, alpha, features', 'name'), ('shifts', 'name, shift_date, capacity_hours', 'id'),
+                    ('pending_orders', 'code, title, deadline, minutes, shots, switches', 'code'),
                 )}
-    content = json.dumps(sets, sort_keys=True, ensure_ascii=False).encode()
+    content = json.dumps(sets, sort_keys=True, ensure_ascii=False, default=str).encode()
     return {'rows': {table: len(rows) for table, rows in sets.items()}, 'keys_and_content_sha256': hashlib.sha256(content).hexdigest()}
 
 

@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from scripts.seed_demo import seed
 from src.config.database import cache, connect, migrate
 from src.middlewares.http import problem_handler, request_identity, response_policy, validation_handler
-from src.routes import reports, studio
+from src.routes import reports, schedule, studio
 from src.utils.errors import Problem
 
 
@@ -30,6 +30,7 @@ app.middleware('http')(request_identity)
 app.middleware('http')(response_policy)
 app.include_router(studio.router)
 app.include_router(reports.router)
+app.include_router(schedule.router)
 
 
 @app.get('/health')

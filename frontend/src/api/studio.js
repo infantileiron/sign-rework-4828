@@ -31,6 +31,12 @@ export const api = {
   publish: id => request(`/reports/${id}/publish`, {method:'POST'}),
   estimate: (id, data) => request(`/reports/${id}/estimate`, {method:'POST', data}),
   export: id => request(`/reports/${id}/export`, {blob:true}),
+  schedule: () => request('/schedule'),
+  addShift: data => request('/schedule/shifts', {method:'POST', data}),
+  addPending: data => request('/schedule/orders', {method:'POST', data}),
+  trial: reportId => request('/schedule/trials', {method:'POST', data:{report_id:reportId}}),
+  trialDetail: id => request(`/schedule/trials/${id}`),
+  confirmTrial: id => request(`/schedule/trials/${id}/confirm`, {method:'POST'}),
 };
 
 export async function loadStudio() {
